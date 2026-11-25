@@ -1,0 +1,35 @@
+{
+  "track": {
+    "title": "中立の読み確認"
+  },
+  "levels": {
+    "calm": {
+      "caption": "A calm neutral speaking voice.",
+      "voice_id": null
+    }
+  },
+  "blocks": [
+    {
+      "id": "B1",
+      "level": "calm"
+    }
+  ],
+  "lines": [
+    {
+      "unit": "B1-1",
+      "speaker": null,
+      "level": null,
+      "lines": [
+        "[案内]係です。",
+        "",
+        "こちらをご覧ください。"
+      ]
+    },
+    {
+      "unit": "B1-2",
+      "lines": [
+        "休憩しましょう。"
+      ]
+    }
+  ]
+}

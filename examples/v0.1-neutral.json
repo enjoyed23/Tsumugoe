@@ -1,0 +1,67 @@
+{
+  "actors": [
+    {
+      "id": "example-actor",
+      "name": "案内アクター",
+      "trigger_word": "neutral_guide",
+      "appearance_notes": "作品をまたいで共有する一般的なメモ。",
+      "voice_ids": [],
+      "standard_voice_id": null
+    }
+  ],
+  "works": [
+    {
+      "id": "example-work",
+      "title": "案内サンプル",
+      "settings": {
+        "premise": "一般的な案内のための検証用設定。",
+        "future_setting": {
+          "retained": true
+        }
+      },
+      "characters": [
+        {
+          "id": "example-character",
+          "actor_id": "example-actor",
+          "names": {
+            "full": "案内係",
+            "family": "案内",
+            "given": "係",
+            "aliases": [
+              "ガイド"
+            ]
+          },
+          "readings": [
+            {
+              "text": "案内係",
+              "reading": "あんないがかり"
+            },
+            {
+              "text": "案内",
+              "reading": "あんない"
+            },
+            {
+              "text": "係",
+              "reading": "かかり"
+            },
+            {
+              "text": "ガイド",
+              "reading": "ガイド"
+            }
+          ],
+          "occupation": "案内担当",
+          "personality": "丁寧",
+          "background": "検証用の一般的な背景。",
+          "speech_base": "簡潔な案内",
+          "language_reference": "",
+          "voice_range": "",
+          "appearance_cg": "",
+          "default_voice_id": null
+        }
+      ]
+    }
+  ],
+  "future_metadata": {
+    "note": "未知項目も保存し、接続設定の追加情報から編集できます。"
+  }
+}

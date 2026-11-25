@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tsumugoe:input:v0.2",
+  "title": "つむごえ v0.2 Trackパック",
+  "type": "object",
+  "additionalProperties": true,
+  "anyOf": [
+    {
+      "required": [
+        "track"
+      ]
+    },
+    {
+      "required": [
+        "lines"
+      ]
+    },
+    {
+      "required": [
+        "cgs"
+      ]
+    },
+    {
+      "required": [
+        "units"
+      ]
+    },
+    {
+      "required": [
+        "blocks"
+      ]
+    }
+  ],
+  "properties": {
+    "track": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "synopsis": {
+          "type": "string"
+        },
+        "relation_stage": {
+          "type": "string"
+        }
+      }
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "block": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "type": "integer"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "unit",
+          "lines"
+        ]
+      }
+    },
+    "cgs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "block": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "type": "integer"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit",
+          "prompt"
+        ]
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "block": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

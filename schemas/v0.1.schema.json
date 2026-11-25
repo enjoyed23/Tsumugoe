@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tsumugoe:input:v0.1",
+  "title": "つむごえ v0.1 取り込み型",
+  "type": "object",
+  "properties": {
+    "actors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/actors"
+      }
+    },
+    "voices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/voices"
+      }
+    },
+    "works": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/works"
+      }
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/character"
+      }
+    },
+    "readings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reading"
+      }
+    },
+    "work_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "actors": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "image_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trigger_word": {
+          "type": "string"
+        },
+        "appearance_notes": {
+          "type": "string"
+        },
+        "voice_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "standard_voice_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "省略またはnullは新規登録。同じIDのみ更新。表示名では照合しません。"
+        }
+      },
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "required": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "voices": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "media_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "source_text": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "confirmed_reference_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "省略またはnullは新規登録。同じIDのみ更新。表示名では照合しません。"
+        }
+      },
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "name"
+          ]
+        },
+        {
+          "required": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "works": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "characters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/character"
+          }
+        },
+        "readings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reading"
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "省略またはnullは新規登録。同じIDのみ更新。表示名では照合しません。"
+        }
+      },
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "title"
+          ]
+        },
+        {
+          "required": [
+            "id"
+          ]
+        }
+      ]
+    },
+    "character": {
+      "type": "object",
+      "properties": {
+        "actor_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "names": {
+          "type": "object",
+          "properties": {
+            "full": {
+              "type": "string"
+            },
+            "family": {
+              "type": "string"
+            },
+            "given": {
+              "type": "string"
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "default_voice_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "occupation": {
+          "type": "string"
+        },
+        "personality": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        },
+        "speech_base": {
+          "type": "string"
+        },
+        "language_reference": {
+          "type": "string"
+        },
+        "voice_range": {
+          "type": "string"
+        },
+        "appearance_cg": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "省略またはnullは新規登録。同じIDのみ更新。表示名では照合しません。"
+        },
+        "readings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reading"
+          },
+          "description": "作品の読み辞書へ投入。キャラクターに別の辞書は作りません。"
+        }
+      },
+      "additionalProperties": true
+    },
+    "reading": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "reading": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "省略またはnullは新規登録。同じIDのみ更新。表示名では照合しません。"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "text"
+      ]
+    }
+  }
+}

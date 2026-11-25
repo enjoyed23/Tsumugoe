@@ -1,0 +1,33 @@
+{
+  "track": {
+    "title": "音声確認用Track"
+  },
+  "levels": {
+    "calm": {
+      "caption": "A calm clear neutral Japanese speaking voice.",
+      "voice_id": null
+    }
+  },
+  "blocks": [
+    {
+      "id": "B1",
+      "title": "案内",
+      "level": "calm"
+    }
+  ],
+  "lines": [
+    {
+      "unit": "B1-1",
+      "lines": [
+        "こんにちは。音声の動作確認です。"
+      ],
+      "voice": null
+    },
+    {
+      "unit": "B1-2",
+      "lines": [
+        "こちらをご覧ください。"
+      ]
+    }
+  ]
+}

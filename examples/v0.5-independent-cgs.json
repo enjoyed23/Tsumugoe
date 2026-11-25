@@ -1,0 +1,29 @@
+{
+  "track": {
+    "title": "CGタイミングの中立例"
+  },
+  "blocks": [
+    {
+      "id": "B1",
+      "title": "入口"
+    },
+    {
+      "id": "B2",
+      "title": "窓辺"
+    }
+  ],
+  "cgs": [
+    {
+      "id": "CG-001",
+      "block": "B1",
+      "prompt": "a red teapot on a wooden table, flat illustration",
+      "character_id": null
+    },
+    {
+      "id": "CG-002",
+      "block": "B2",
+      "prompt": "a blue teapot beside a window, flat illustration",
+      "character_id": null
+    }
+  ]
+}

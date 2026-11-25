@@ -1,0 +1,13 @@
+{
+  "track": {
+    "title": "中立CGの確認"
+  },
+  "cgs": [
+    {
+      "unit": "B1-1",
+      "prompt": "a red ceramic teapot on a wooden table, clean flat illustration, white background, no people",
+      "note": "中立の確認用",
+      "character_id": null
+    }
+  ]
+}

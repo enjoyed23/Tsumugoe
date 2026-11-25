@@ -1,0 +1,29 @@
+/* Domain fields first; raw JSON is always a secondary, collapsed editor. */
+const structuredUndo=new Map();
+function structuredField(raw,wrapper,title){
+ const host=E('section',undefined,'structured-editor'),tree=E('div'),error=E('p',undefined,'feedback'),details=E('details');host.setAttribute('aria-label',title+'の項目編集');details.append(E('summary','JSONで編集'),raw);wrapper.replaceWith(host);host.append(E('strong',title),...wrapper.querySelectorAll('small'),tree,error,details);raw.dataset.fieldLabel=title;let data;
+ const labels={python:'Pythonの実行ファイル',main:'ComfyUIのmain.py',models:'共通モデルフォルダ',ipadapter:'IP-Adapterモデルフォルダ',clip_vision:'CLIP Visionモデルフォルダ',checkpoint:'チェックポイント',ckpt_name:'チェックポイント',steps:'ステップ数',cfg:'CFG',sampler_name:'サンプラー',scheduler:'スケジューラ',denoise:'描き直し強度',name:'ファイル名',strength_model:'画像への強度',strength_clip:'テキストへの強度',weight:'強度',text:'テキスト',caption:'キャプション',note:'メモ',world:'世界観',premise:'基本設計',voice_range:'音域'};
+ const control=(n,path)=>{n.name='gui:'+raw.name+':'+JSON.stringify(path);n.dataset.structuredControl='true';return n};
+ const undoKey=()=>raw.closest('form')?.dataset.key+':'+raw.name;
+ const undo=action('直前の項目操作を取り消す',()=>{const previous=structuredUndo.get(undoKey());if(previous===undefined)return;data=JSON.parse(previous);structuredUndo.delete(undoKey());notify();draw()});host.insertBefore(undo,details);const remember=()=>structuredUndo.set(undoKey(),JSON.stringify(data));
+ function notify(){raw.value=JSON.stringify(data,null,2);raw.dispatchEvent(new Event('input',{bubbles:true}));error.textContent=''}
+ function draw(){tree.replaceChildren();undo.disabled=!structuredUndo.has(undoKey());build(tree,data,[],v=>{data=v},'')}
+ function build(parent,value,path,set,name){
+  const container=value!==null&&typeof value==='object';if(container){
+   const group=E('div',undefined,'structured-group');parent.append(group);if(name)group.append(E('h3',labels[name]||name));
+   for(const [key,item]of Object.entries(value)){
+    const row=E('div',undefined,'structured-item');group.append(row);build(row,item,path.concat(key),v=>{value[key]=v},Array.isArray(value)?'項目 '+(Number(key)+1):key);
+    const more=E('details');more.append(E('summary','項目の操作'));more.append(action('この項目を除く',()=>{remember();if(Array.isArray(value))value.splice(Number(key),1);else delete value[key];notify();draw()}));
+    if(Array.isArray(value))for(const [text,delta]of [['上へ',-1],['下へ',1]]){const b=action(text,()=>{remember();const i=Number(key),j=i+delta;[value[i],value[j]]=[value[j],value[i]];notify();draw()});b.disabled=Number(key)+delta<0||Number(key)+delta>=value.length;more.append(b)}row.append(more)
+   }
+   const adding=E('details');adding.append(E('summary',Array.isArray(value)?'項目を追加':'別の設定項目を追加'));const key=E('input');key.placeholder='項目名';key.setAttribute('aria-label','追加する項目名');if(!Array.isArray(value))adding.append(key);const type=E('select');type.setAttribute('aria-label','追加する項目の形式');for(const [id,text]of [['text','テキスト'],['number','数値'],['boolean','ON／OFF'],['object','設定グループ'],['array','リスト']]){const o=E('option',text);o.value=id;type.append(o)}adding.append(type,action('項目を追加',()=>{if(!Array.isArray(value)&&(!key.value||Object.hasOwn(value,key.value))){error.textContent='重複しない項目名を入力してください。';return}remember();const v=type.value==='number'?0:type.value==='boolean'?false:type.value==='object'?{}:type.value==='array'?[]:'';if(Array.isArray(value))value.push(v);else Object.defineProperty(value,key.value,{value:v,enumerable:true,writable:true,configurable:true});notify();draw()}));group.append(adding)
+  }else{
+   const input=E(typeof value==='string'?'textarea':'input');if(typeof value==='boolean'){input.type='checkbox';input.checked=value}else if(typeof value==='number'){input.type='number';input.step='any';input.value=value}else{input.value=value??'';input.rows=2}control(input,path);parent.append(label(labels[name]||name,input));input.oninput=()=>{if(input.type==='number'&&(input.value===''||!Number.isFinite(Number(input.value)))){error.textContent='数値を入力してください。';return}set(input.type==='checkbox'?input.checked:input.type==='number'?Number(input.value):input.value);notify()}
+  }
+ }
+ raw._structuredRedraw=()=>{try{data=JSON.parse(raw.value);draw();error.textContent=''}catch{error.textContent='JSONの構文を確認してください。GUIの表示は直前の値を保持しています。'}};raw.addEventListener('input',()=>{if(document.activeElement===raw)raw._structuredRedraw()});raw._structuredRedraw();
+}
+function actorLoraFields(parent,n,a){
+ const file=select(parent,'このキャラクターのLoRA','lora_file',[['','LoRAを使わない']],a.lora?.name);file.addEventListener('change',()=>{n._loraTouched=true});const message=E('p',undefined,'muted');parent.append(message);const more=E('details');more.append(E('summary','LoRAの強度'));const m=field(more,'画像への強度','lora_model',a.lora?.strength_model??.9,'number'),c=field(more,'テキストへの強度','lora_clip',a.lora?.strength_clip??.9,'number');m.step=c.step='any';parent.append(more);
+ async function load(){message.textContent='ComfyUIのLoRA一覧を取得中…';try{const [r,cfg]=await Promise.all([request('cg-inspect',{}),request('cg-config',{})]);const legacy=cfg.trigger_loras?.[a.trigger_word]?.[0],initial=a.lora?.name||(!Object.hasOwn(a,'lora')?legacy?.name:'')||'',current=file.value||initial;file.replaceChildren();for(const v of new Set(['',...(r.models.LoraLoader||[]),...(current?[current]:[])])){const o=E('option',v||'LoRAを使わない');o.value=v;file.append(o)}file.value=current;if(initial&&!a.lora){m.value=legacy?.strength_model??legacy?.weight??.9;c.value=legacy?.strength_clip??legacy?.weight??.9}if(!drafts.has(n.dataset.key)&&n._savedValues){n._savedValues.lora_file=file.value;n._savedValues.lora_model=m.value;n._savedValues.lora_clip=c.value}message.textContent='選ぶと自動保存します。キャラクターを指定したCGに適用します。'}catch(e){message.textContent='LoRA一覧を取得できません。ComfyUIを起動し、「一覧を更新」を押してください。既存の指定は保持しています。'}}parent.append(action('一覧を更新',load));load();
+}

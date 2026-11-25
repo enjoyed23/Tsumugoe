@@ -1,0 +1,35 @@
+{
+  "blocks": [
+    {
+      "id": "B1"
+    }
+  ],
+  "lines": [
+    {
+      "unit": "B1-1",
+      "lines": [
+        "最初の場面です。"
+      ]
+    },
+    {
+      "unit": "B1-2",
+      "lines": [
+        "次の場面です。"
+      ]
+    }
+  ],
+  "cgs": [
+    {
+      "id": "CG-001",
+      "start_unit": "B1-1",
+      "prompt": "red teapot, flat illustration",
+      "character_id": null
+    },
+    {
+      "id": "CG-002",
+      "start_unit": "B1-2",
+      "prompt": "blue teapot, flat illustration",
+      "character_id": null
+    }
+  ]
+}

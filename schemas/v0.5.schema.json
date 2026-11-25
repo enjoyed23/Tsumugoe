@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tsumugoe:input:v0.5",
+  "title": "つむごえ v0.5 Trackパック",
+  "type": "object",
+  "additionalProperties": true,
+  "anyOf": [
+    {
+      "required": [
+        "track"
+      ]
+    },
+    {
+      "required": [
+        "lines"
+      ]
+    },
+    {
+      "required": [
+        "cgs"
+      ]
+    },
+    {
+      "required": [
+        "units"
+      ]
+    },
+    {
+      "required": [
+        "blocks"
+      ]
+    },
+    {
+      "required": [
+        "levels"
+      ]
+    }
+  ],
+  "properties": {
+    "track": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "synopsis": {
+          "type": "string"
+        },
+        "relation_stage": {
+          "type": "string"
+        },
+        "levels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "caption": {
+                "type": "string"
+              },
+              "voice_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "block": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "type": "integer"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "level": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "speaker": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "voice": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "ボイスライブラリの内部ID。未知IDも保持し報告する。"
+          }
+        },
+        "required": [
+          "unit",
+          "lines"
+        ]
+      }
+    },
+    "cgs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "description": "表示開始ユニットIDの互換表記。省略せず完全なIDをstart_unitへ渡す。start_unitが明示されていればそちらを優先。id省略時はCG IDにも使用。"
+          },
+          "block": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "表示開始Blockへの参照。未設定はnull。1BlockにつきCG1件まで。"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "character_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "loras": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "weight": {
+                  "type": "number"
+                },
+                "strength_model": {
+                  "type": "number"
+                },
+                "strength_clip": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Track内で一意のCG ID。単位IDではない。"
+          },
+          "start_unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "表示開始ユニットのID。CGの所属ではなくタイミング参照。省略時は旧block指定を使用。"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "id"
+            ]
+          },
+          {
+            "required": [
+              "unit"
+            ]
+          }
+        ]
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "level": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "voice": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "ボイスライブラリの内部ID。未知IDも保持し報告する。"
+          },
+          "voice_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "ボイスライブラリの内部ID。未知IDも保持し報告する。"
+          }
+        }
+      }
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "block": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "level": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "speaker": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "voice": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "ボイスライブラリの内部ID。未知IDも保持し報告する。"
+          }
+        }
+      }
+    },
+    "levels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "caption": {
+            "type": "string"
+          },
+          "voice_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

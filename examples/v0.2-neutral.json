@@ -1,0 +1,44 @@
+{
+  "track": {
+    "id": "neutral-track-1",
+    "title": "確認用Track",
+    "synopsis": "案内をして休憩する。"
+  },
+  "blocks": [
+    {
+      "id": "B1",
+      "title": "案内"
+    },
+    {
+      "id": "B2",
+      "title": "休憩"
+    }
+  ],
+  "lines": [
+    {
+      "unit": "B1-1",
+      "lines": [
+        "ようこそ。",
+        "",
+        "こちらをご覧ください。"
+      ],
+      "speaker": "guide"
+    },
+    {
+      "unit": "B2-1",
+      "lines": [
+        "少し休みましょう。"
+      ]
+    }
+  ],
+  "cgs": [
+    {
+      "unit": "B1-1",
+      "prompt": "empty lobby, daylight",
+      "note": "中立の検証用"
+    }
+  ],
+  "future_detail": {
+    "note": "未知の項目も保持する"
+  }
+}
