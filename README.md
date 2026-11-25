@@ -1,62 +1,51 @@
-# つむごえ v0.5
+# つむごえ (Tsumugoe)
 
-新規アプリの第5増分「CG生成・管理」です。旧Studioの制作データは読み込まず、削除・移行もしません。
+ローカルで台詞・音声・CGを管理し、生成と再生確認を行うWebアプリです。Python標準ライブラリで動作し、フロントエンドのビルドは不要です。
 
 ## 起動
 
-1. Python 3.10以降を用意します（実機ではPython 3.12で検証）。アプリ本体の追加パッケージは不要です。
-2. `start.cmd` を実行します。
-3. http://127.0.0.1:8088/ をブラウザで開きます。
+1. Python 3.10以降を用意します（検証環境は3.12）。
+2. `start.cmd` または `python -B app.py` を実行します。
+3. `http://127.0.0.1:8088/` を開きます。
 
-コマンド起動は `python -B app.py` です。終了は起動したコンソールで Ctrl+C。書き込み先はこのアプリの `work/` のみです。接続設定は `work/config.json`、資産・作品・配役・辞書は `work/library.json`、登録ファイルは `work/media/` に保存します。変更前のメタ情報は `work/history/` に保管します。初期状態は空です。
+初回は空の状態です。制作データ・登録画像・音声・CG・ローカル設定は自動作成される `work/` 内に保存され、Gitには含まれません。
 
-## この増分にあるもの
+## 操作
 
-- アクター一覧と詳細：画像1枚、LoRAトリガーワード、外見メモ、関連ボイスと標準
-- ボイスライブラリ：PCM WAVの登録・候補試聴・確定・メモ編集
-- 作品一覧と作品設定、アクターを共有する配役、役の情報と既定ボイス
-- 作品に1つの名前・読み辞書、自動登録・競合確認・編集
-- 全画面に常駐するJSON取り込み、入力の型・中立サンプル
-- 使用先を見せる2段削除、下書き保持、保存状態表示
-- IRODORI-TTSのワーカー応答確認とローカルComfyUIの接続確認
+- 作品は何も入力せず「空の作品を作成」で作成できます。
+- 読み指定・アクター・配役・台詞・生成設定などは入力後に自動保存します。
+- 保存できない入力は対象欄と理由を表示します。画面移動・Track追加・取り込みを未保存の理由で禁止しません。
+- 設定はGUIで編集でき、JSON編集は各設定の下の詳細に置いています。追加の未知項目も保持します。
+- アクター画面で画像・トリガーワード・そのキャラクターのLoRAファイルを指定します。LoRAはComfyUIの一覧から選択できます。
+- CG設定では解像度・CFG・ネガティブ・顔inpaint・IP-Adapterなど共通の生成条件を設定します。旧LoRA対応表は互換用です。
+- Ref候補の確定、削除確認、生成実行は明示的に操作します。
 
-v0.2では作品内Track一覧・明示した新規追加/更新・種別ごとの取り込み・削除確認・Block管理・台詞の通読を追加しました。v0.3では単位の台詞編集・通読・読み指定と送信文プレビュー・レベル対応表・追加と並べ替えまで使えます。v0.4ではローカルTTS生成・再生成・中断、チャンク構成編集、Track/Block試聴、ゲイン、空白、WAV書き出しを追加しました。v0.5ではCG生成・編集・添付切り替え・解像度設定・IP-Adapter参照受け渡しを追加しました。ノベル表示はv1.0です。
+## ローカル接続
 
-入力は [INPUT_v0.5.md](INPUT_v0.5.md)、受け入れ手順は [ACCEPTANCE_v0.5.md](ACCEPTANCE_v0.5.md) を参照してください。
+TTSには別途IRODORI-TTSの実行環境が、CGにはローカルComfyUIが必要です。接続設定とCG設定で、このPCのパス・接続先を指定してください。`config.default.json` のパスは配置例です。実際の設定は `work/config.json` に保存されます。
 
-## 設定とローカル接続
+アプリのサービス接続はローカルに限定します。ノベル表示・音声試聴・CGのタイミング指定もアプリ内で行います。
 
-ヘッダーの「接続設定」で、TTSの実行環境、チェックポイント、ComfyUIの接続先を編集できます。既存Studioから流用したのは接続用コードと技術設定だけです。TTSチェックはワーカーを起動してshutdown応答を確認し、モデル読込・音声生成・ネット上からのモデル取得をしません。ComfyUIはlocalhostのsystem_statsだけを確認します。外部ホストや外部へのリダイレクトは禁止です。
+## 入力とテスト
 
-## 入力の型
+入力例は `examples/`、スキーマは `schemas/` にあります。名前の一致ではなくIDで照合し、種別ごとのミラーと削除確認を行います。
 
-[INPUT_v0.1.md](INPUT_v0.1.md) と [schemas/v0.1.schema.json](schemas/v0.1.schema.json) を参照してください。実装のフィールドモデル `model.py` が正です。アクターや作品を名前で照合して上書きすることはありません。
+```text
+python -B -m unittest discover -s tests
+node tests/test_autosave_frontend.js
+node tests/test_structured_frontend.js
+node tests/test_audio_frontend.js
+node tests/test_novel_frontend.js
+```
 
-## 受け入れ検証
+Nodeは開発テスト用で、アプリ起動には不要です。今回の変更と確認範囲は [AUTOSAVE_UI.md](AUTOSAVE_UI.md) を参照してください。
 
-[ACCEPTANCE_v0.1.md](ACCEPTANCE_v0.1.md) に8項目の確認手順をまとめています。中立サンプルでの実装側検証と、実データによるユーザーの合格判定は別です。花小路の移行はユーザーが画面で段階的に行い、旧アプリを並行保持します。移行ツールはありません。
+## 構成
 
-自動テスト：`python -B -m unittest discover -s tests -q`
-
-## ファイル構成
-
-- app.py：ローカルHTTP API
-- model.py：所有関係・読み辞書・保存・取り込み
-- connections.py：ローカル接続チェック
-- engine/irodori_worker.py：旧Studioと同じ方式の接続ワーカー
-- web/：ビルド不要の画面
-- specifications/：受領した指示書
-- schemas/ / examples/：入力の型と中立例
-- work/：このアプリだけの永続化・登録ファイル
-
-
-## v0.4の検証範囲
-
-実TTSと自動テストは確認済みです。ブラウザ操作はツール利用上限で未確認のため、[VALIDATION_v0.4.md](VALIDATION_v0.4.md)を参照してください。音声スタジオへは各Trackの台詞画面から進めます。
-開発用の偽DOMテストは `node tests/test_audio_frontend.js`。Nodeはアプリ起動には不要です。
-
-
-## v0.5 CG
-
-Trackの台詞画面から「CG」を開きます。専用ComfyUIは8189、起動操作と設定はCG画面にあります。最初にCG設定のトリガーとLoRA対応表を指定してください。LoRAファイル名はComfyUIの一覧どおりに指定します。制作データの一括移行はありません。
-[VALIDATION_v0.5.md](VALIDATION_v0.5.md) に実生成・ブラウザ確認の結果をまとめています。
+- `app.py`：ローカルHTTP API
+- `model.py` / `tracks.py` / `dialogue.py`：保存・取り込み・作品とTrack・読み指定
+- `audio.py` / `audio_jobs.py` / `engine/`：音声処理とローカルTTS接続
+- `cg.py` / `cg_jobs.py` / `cg_records.py` / `comfy_client.py`：CGとComfyUI接続
+- `web/`：画面と自動保存
+- `tests/`：中立データによる自動テスト
+- `work/`：制作データ・生成物（公開対象外）
