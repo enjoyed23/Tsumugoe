@@ -91,3 +91,33 @@ class AudioTests(unittest.TestCase):
    before=self.s.path.read_bytes()
    with self.assertRaises(Problem):self.a.edit('w',self.tid,'track',{'chunk_gap_ms':value})
    self.assertEqual(before,self.s.path.read_bytes())
+
+ def test_block_end_silence_persists_and_exports_without_regeneration(self):
+  self.generate();old=[c['media_id'] for c in self.rows()]
+  self.a.edit('w',self.tid,'track',{'chunk_gap_ms':0})
+  self.a.edit('w',self.tid,'block',{'block_id':'B1','end_gap_ms':250})
+  self.a.edit('w',self.tid,'block',{'block_id':'B2','end_gap_ms':100})
+  fresh=Store(self.base).data['works'][0]['tracks'][0]
+  self.assertEqual([b.get('end_gap_ms') for b in fresh['blocks']],[250,100])
+  self.assertEqual([c['media_id'] for c in self.rows()],old)
+  self.assertTrue(all(c['state']=='音声あり' for c in self.rows()))
+  result=export_wav(self.s,'w',self.tid)
+  self.assertAlmostEqual(result['seconds'],.65)
+  with wave.open(str(self.s.media_path(self.s.data['media'][result['media_id']])),'rb') as f:
+   samples=array.array('h');samples.frombytes(f.readframes(f.getnframes()))
+  self.assertTrue(all(x==2000 for x in samples[:1600]))
+  self.assertTrue(all(x==0 for x in samples[1600:3600]))
+  self.assertTrue(all(x==2000 for x in samples[3600:4400]))
+  self.assertTrue(all(x==0 for x in samples[4400:]))
+  self.a.edit('w',self.tid,'block',{'block_id':'B1','end_gap_ms':0})
+  self.assertAlmostEqual(export_wav(self.s,'w',self.tid)['seconds'],.4)
+ def test_block_end_silence_adds_to_common_and_manual_gaps(self):
+  self.generate();self.a.edit('w',self.tid,'track',{'chunk_gap_ms':20})
+  self.a.edit('w',self.tid,'block',{'block_id':'B1','end_gap_ms':250})
+  self.a.edit('w',self.tid,'gap-save',{'after':self.rows()[1]['id'],'seconds':.1})
+  self.assertAlmostEqual(export_wav(self.s,'w',self.tid)['seconds'],.69)
+ def test_block_end_gap_rejects_invalid_values_without_writing(self):
+  for value in [-1,True,None,'20',float('nan'),float('inf')]:
+   before=self.s.path.read_bytes()
+   with self.assertRaises(Problem):self.a.edit('w',self.tid,'block',{'block_id':'B1','end_gap_ms':value})
+   self.assertEqual(before,self.s.path.read_bytes())

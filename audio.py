@@ -115,8 +115,9 @@ class Audio:
    elif operation=='block':
     b=next((b for b in t['blocks'] if b['id']==body.get('block_id')),None)
     if not b:raise Problem('Blockがありません。')
-    for k in ('gain','voice_id'):
+    for k in ('gain','voice_id','end_gap_ms'):
      if k in body:
+      if k=='end_gap_ms':number(body[k],'Block末尾の間（ms）',0)
       if k=='gain' and body[k] is not None:number(body[k],'Block音量',0,4)
       if k=='voice_id' and body[k] is not None and not isinstance(body[k],str):raise Problem('ボイスIDは文字列にしてください。')
       b[k]=body[k]

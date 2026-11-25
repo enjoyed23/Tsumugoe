@@ -113,7 +113,7 @@ def export_wav(store,wid,tid):
  with store.lock:
   data=copy.deepcopy(store.data);w,t=Audio(store).locate(data,wid,tid)
   if not summary(t,w,data,store)['complete']:raise Problem('全単位の台詞・全チャンクの生成・要確認の解消を終えてから書き出してください。')
-  chunks=audio(t)['chunks'];gaps=audio(t)['gaps'];mid=ident();dest=store.work/'media'/(mid+'.wav');dest.parent.mkdir(exist_ok=True);params=None
+  chunks=audio(t)['chunks'];gaps=audio(t)['gaps'];unit_blocks={u['id']:u['block'] for u in t['units']};block_ends={unit_blocks[c['unit']]:c['id'] for c in chunks};blocks={b['id']:b for b in t['blocks']};mid=ident();dest=store.work/'media'/(mid+'.wav');dest.parent.mkdir(exist_ok=True);params=None
   try:
    with wave.open(str(dest),'wb') as out:
     for index,c in enumerate(chunks):
@@ -132,6 +132,10 @@ def export_wav(store,wid,tid):
        raw=f.readframes(65536)
        if not raw:break
        values=array.array('h');values.frombytes(raw);out.writeframesraw(array.array('h',(max(-32768,min(32767,round(x*ctx['gain']))) for x in values)).tobytes())
+     block_id=unit_blocks[c['unit']]
+     if block_ends[block_id]==c['id']:
+      left=round(blocks.get(block_id,{}).get('end_gap_ms',0)/1000*params[1])
+      while left:n=min(left,params[1]);out.writeframesraw(b'\0'*(n*params[0]*2));left-=n
     for g in gaps:
      if chunks and g['after']==chunks[-1]['id']:
       left=round(g['seconds']*params[1])
